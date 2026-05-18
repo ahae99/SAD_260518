@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>墨海書閣 — 小說分享交流平台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --ink-mid: #3d2e14;
+    --ink-light: #6b5432;
+    --parchment: #f5eedc;
+    --parchment-dark: #e8dfc4;
+    --parchment-deep: #d4c89a;
+    --accent: #8b1a1a;
+    --accent-gold: #b8860b;
+    --accent-gold-light: #daa520;
+    --red-seal: #c0392b;
+    --border: #c4a96a;
+    --border-dark: #8b6914;
+    --shadow: rgba(26,18,8,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif TC', serif;
+    background: var(--parchment);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(180,150,80,0.08) 31px, rgba(180,150,80,0.08) 32px),
+      repeating-linear-gradient(90deg, transparent, transparent 31px, rgba(180,150,80,0.06) 31px, rgba(180,150,80,0.06) 32px);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--parchment-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── TYPOGRAPHY ── */
+  .title-font { font-family: 'Ma Shan Zheng', cursive; }
+  .sub-font { font-family: 'ZCOOL XiaoWei', serif; }
+
+  /* ── PAGES ── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; flex-direction: column; }
+
+  /* ══════════════════════════════
+     HEADER / NAV
+  ══════════════════════════════ */
+  header {
+    background: var(--ink);
+    border-bottom: 3px solid var(--accent-gold);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--accent-gold-light);
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-shadow: 0 0 20px rgba(218,165,32,0.3);
+  }
+  .logo span { color: var(--parchment); font-size: 1.1rem; margin-left: 0.5rem; vertical-align: middle; font-family: 'Noto Serif TC', serif; opacity: 0.7; }
+  nav { display: flex; align-items: center; gap: 1.5rem; }
+  .nav-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--parchment-dark); font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem; letter-spacing: 0.05em; padding: 6px 14px;
+    border-radius: 2px; transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .nav-btn:hover { color: var(--accent-gold-light); border-color: var(--accent-gold); }
+  .nav-btn.active { color: var(--accent-gold-light); border-color: var(--accent-gold); background: rgba(184,134,11,0.1); }
+  .nav-btn.primary {
+    background: var(--accent-gold);
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .nav-btn.primary:hover { background: var(--accent-gold-light); }
+
+  /* ══════════════════════════════
+     HERO / LANDING
+  ══════════════════════════════ */
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(184,134,11,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-ornament {
+    font-size: 3rem;
+    color: var(--accent-gold);
+    opacity: 0.3;
+    letter-spacing: 0.5em;
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: var(--ink);
+    letter-spacing: 0.2em;
+    line-height: 1.1;
+    text-shadow: 2px 2px 0 var(--parchment-deep);
+  }
+  .hero-subtitle {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.1rem;
+    color: var(--ink-light);
+    margin: 1rem 0 2.5rem;
+    letter-spacing: 0.15em;
+  }
+  .divider-ornament {
+    color: var(--accent-gold);
+    letter-spacing: 0.4em;
+    font-size: 1.2rem;
+    margin: 1rem 0;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    padding: 10px 28px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--accent-gold-light);
+    border: 2px solid var(--accent-gold);
+  }
+  .btn-primary:hover { background: var(--ink-mid); box-shadow: 0 4px 12px var(--shadow); transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid var(--border-dark);
+  }
+  .btn-secondary:hover { background: var(--parchment-dark); }
+
+  /* ══════════════════════════════
+     AUTH PAGES
+  ══════════════════════════════ */
+  .auth-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .auth-card {
+    background: var(--parchment);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 8px 8px 0 rgba(139,105,20,0.15), inset 0 0 60px rgba(180,150,80,0.04);
+    position: relative;
+  }
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(196,169,106,0.4);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .auth-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.15em;
+  }
+  .auth-desc { text-align: center; color: var(--ink-light); font-size: 0.85rem; margin-bottom: 2rem; letter-spacing: 0.05em; }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label {
+    display: block; font-size: 0.85rem; color: var(--ink-mid);
+    margin-bottom: 0.4rem; letter-spacing: 0.1em;
+  }
+  .form-input {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--parchment-dark);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent-gold); background: var(--parchment); }
+  .form-input::placeholder { color: rgba(107,84,50,0.5); }
+  .avatar-upload {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .avatar-preview {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--parchment-dark);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    color: var(--ink-light);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .upload-hint { font-size: 0.78rem; color: var(--ink-light); line-height: 1.5; }
+  .submit-btn {
+    width: 100%;
+    padding: 11px;
+    background: var(--ink);
+    color: var(--accent-gold-light);
+    border: 2px solid var(--accent-gold);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .submit-btn:hover { background: var(--ink-mid); box-shadow: 0 4px 12px var(--shadow); }
+  .auth-switch {
+    text-align: center; margin-top: 1.2rem; font-size: 0.85rem; color: var(--ink-light);
+  }
+  .auth-link { color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .auth-link:hover { color: var(--accent-gold); }
+  .error-msg { color: var(--red-seal); font-size: 0.8rem; margin-top: 0.3rem; }
+  .success-msg { color: #2e7d32; font-size: 0.85rem; text-align: center; margin-top: 0.8rem; }
+
+  /* ══════════════════════════════
+     HOME / DASHBOARD
+  ══════════════════════════════ */
+  .home-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    width: 100%;
+    align-items: start;
+  }
+  .sidebar {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--parchment);
+    padding: 1.5rem;
+    position: sticky;
+    top: 84px;
+    box-shadow: 4px 4px 0 rgba(139,105,20,0.1);
+  }
+  .profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.2rem;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-gold);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--parchment-dark);
+    font-size: 1.8rem;
+    color: var(--ink-light);
+    margin-bottom: 0.7rem;
+  }
+  .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-name { font-family: 'ZCOOL XiaoWei', serif; font-size: 1.1rem; color: var(--ink); }
+  .profile-id { font-size: 0.78rem; color: var(--ink-light); margin-top: 0.2rem; }
+  .profile-stats { display: flex; gap: 1.5rem; margin-top: 0.8rem; }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 1.2rem; font-weight: 700; color: var(--ink); }
+  .stat-label { font-size: 0.7rem; color: var(--ink-light); }
+
+  /* ── BIO ── */
+  .profile-bio {
+    font-size: 0.8rem;
+    color: var(--ink-mid);
+    line-height: 1.65;
+    margin-top: 0.8rem;
+    width: 100%;
+    text-align: center;
+    padding: 0 0.2rem;
+    word-break: break-word;
+    min-height: 1.2em;
+    font-style: italic;
+    opacity: 0.85;
+  }
+  .profile-bio.placeholder { color: var(--ink-light); opacity: 0.5; font-style: italic; }
+  .bio-edit-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--ink-light);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 0.4rem;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .bio-edit-btn:hover { border-color: var(--accent-gold); color: var(--ink); background: rgba(184,134,11,0.06); }
+  .bio-edit-area {
+    width: 100%;
+    margin-top: 0.6rem;
+    background: var(--parchment-dark);
+    border: 1px solid var(--accent-gold);
+    border-radius: 2px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.8rem;
+    color: var(--ink);
+    padding: 7px 9px;
+    resize: vertical;
+    min-height: 64px;
+    outline: none;
+    line-height: 1.6;
+  }
+  .bio-edit-area::placeholder { color: rgba(107,84,50,0.45); }
+  .bio-save-row { display: flex; gap: 0.5rem; margin-top: 0.4rem; width: 100%; justify-content: flex-end; }
+  .bio-save-btn {
+    padding: 4px 14px;
+    background: var(--ink);
+    color: var(--accent-gold-light);
+    border: 1px solid var(--accent-gold);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.78rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .bio-save-btn:hover { background: var(--ink-mid); }
+  .bio-cancel-btn {
+    padding: 4px 10px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--border);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.78rem;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .bio-cancel-btn:hover { background: var(--parchment-dark); }
+
+  /* profile page bio */
+  .profile-hero-bio {
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    margin-top: 0.6rem;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  .sidebar-nav { display: flex; flex-direction: column; gap: 0.4rem; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 8px 10px; border-radius: 2px; cursor: pointer;
+    font-size: 0.9rem; color: var(--ink-mid); letter-spacing: 0.05em;
+    transition: all 0.15s; border: 1px solid transparent;
+  }
+  .sidebar-item:hover { background: var(--parchment-dark); border-color: var(--border); }
+  .sidebar-item.active { background: var(--ink); color: var(--accent-gold-light); }
+  .sidebar-icon { font-size: 1rem; }
+  .new-post-btn {
+    width: 100%; margin-top: 1.2rem;
+    padding: 10px;
+    background: var(--accent);
+    color: var(--parchment);
+    border: none;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .new-post-btn:hover { background: #7a1515; transform: translateY(-1px); box-shadow: 0 3px 8px var(--shadow); }
+
+  .main-content { padding-left: 2rem; }
+  .section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--ink);
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-title::before { content: '『'; color: var(--accent-gold); }
+  .section-title::after { content: '』'; color: var(--accent-gold); }
+
+  /* ══════════════════════════════
+     POST CARDS
+  ══════════════════════════════ */
+  .post-list { display: flex; flex-direction: column; gap: 1.2rem; }
+  .post-card {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 3px 3px 0 rgba(139,105,20,0.1);
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .post-card:hover { box-shadow: 5px 5px 0 rgba(139,105,20,0.15); transform: translateY(-1px); }
+  .post-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+  .post-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--parchment-dark);
+    font-size: 1rem; color: var(--ink-light);
+    flex-shrink: 0;
+  }
+  .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .post-meta { flex: 1; }
+  .post-author { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+  .post-author-id { font-size: 0.75rem; color: var(--ink-light); }
+  .post-time { font-size: 0.75rem; color: var(--ink-light); margin-left: auto; }
+  .post-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+  .post-content { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.8; margin-bottom: 0.8rem; }
+  .post-content.truncated {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .post-image { width: 100%; max-height: 240px; object-fit: cover; border-radius: 2px; margin-bottom: 0.8rem; border: 1px solid var(--border); }
+  .post-actions { display: flex; align-items: center; gap: 1.5rem; padding-top: 0.6rem; border-top: 1px solid var(--parchment-deep); }
+  .action-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: none; border: none; cursor: pointer;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.82rem; color: var(--ink-light);
+    padding: 4px 8px; border-radius: 2px; transition: all 0.15s;
+  }
+  .action-btn:hover { color: var(--accent); background: rgba(192,57,43,0.06); }
+  .action-btn.liked { color: var(--accent); }
+  .action-btn .icon { font-size: 1rem; }
+
+  /* ══════════════════════════════
+     COMPOSE PAGE
+  ══════════════════════════════ */
+  .compose-container {
+    flex: 1;
+    max-width: 780px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    width: 100%;
+  }
+  .compose-card {
+    background: var(--parchment);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem;
+    box-shadow: 6px 6px 0 rgba(139,105,20,0.12);
+  }
+  .compose-author {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--border);
+  }
+  .compose-author-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%; border: 2px solid var(--accent-gold);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--parchment-dark); font-size: 1.2rem; color: var(--ink-light);
+  }
+  .compose-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .compose-author-info .name { font-weight: 700; color: var(--ink); font-size: 0.95rem; }
+  .compose-author-info .id { font-size: 0.78rem; color: var(--ink-light); }
+  .compose-input {
+    width: 100%;
+    background: var(--parchment-dark);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    outline: none;
+    padding: 10px 14px;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+  }
+  .compose-input:focus { border-color: var(--accent-gold); background: var(--parchment); }
+  .compose-input::placeholder { color: rgba(107,84,50,0.45); }
+  .compose-textarea {
+    width: 100%;
+    background: var(--parchment-dark);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    padding: 12px 14px;
+    resize: vertical;
+    min-height: 200px;
+    line-height: 1.9;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+  }
+  .compose-textarea:focus { border-color: var(--accent-gold); background: var(--parchment); }
+  .compose-textarea::placeholder { color: rgba(107,84,50,0.45); }
+  .image-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    color: var(--ink-light);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+    background: var(--parchment-dark);
+  }
+  .image-upload-area:hover { border-color: var(--accent-gold); color: var(--ink); }
+  .image-upload-area .upload-icon { font-size: 2rem; margin-bottom: 0.4rem; display: block; }
+  .image-preview-wrap { position: relative; display: inline-block; }
+  .image-preview-wrap img { max-height: 160px; border-radius: 2px; border: 1px solid var(--border); display: block; }
+  .remove-img {
+    position: absolute; top: -8px; right: -8px;
+    width: 22px; height: 22px;
+    background: var(--red-seal); color: white; border: none; border-radius: 50%;
+    font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .compose-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+  .publish-btn {
+    padding: 10px 32px;
+    background: var(--accent);
+    color: var(--parchment);
+    border: none;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .publish-btn:hover { background: #7a1515; box-shadow: 0 3px 8px var(--shadow); }
+  .cancel-link { color: var(--ink-light); cursor: pointer; font-size: 0.85rem; text-decoration: underline; }
+  .cancel-link:hover { color: var(--accent); }
+
+  /* ══════════════════════════════
+     SHARE / FEED PAGE
+  ══════════════════════════════ */
+  .feed-container {
+    flex: 1;
+    max-width: 760px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    width: 100%;
+  }
+
+  /* ══════════════════════════════
+     COMMENTS
+  ══════════════════════════════ */
+  .comments-section { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px dashed var(--border); }
+  .comments-section.hidden { display: none; }
+  .comment-item {
+    display: flex; gap: 0.7rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(196,169,106,0.25);
+  }
+  .comment-item:last-child { border-bottom: none; }
+  .comment-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%; border: 1px solid var(--border);
+    background: var(--parchment-dark);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; color: var(--ink-light); flex-shrink: 0;
+  }
+  .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .comment-body { flex: 1; }
+  .comment-author { font-size: 0.8rem; font-weight: 700; color: var(--ink); }
+  .comment-text { font-size: 0.82rem; color: var(--ink-mid); line-height: 1.6; margin-top: 0.15rem; }
+  .comment-input-area { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
+  .comment-input {
+    flex: 1;
+    background: var(--parchment-dark);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 7px 10px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.82rem;
+    color: var(--ink);
+    outline: none;
+  }
+  .comment-input:focus { border-color: var(--accent-gold); background: var(--parchment); }
+  .comment-send-btn {
+    padding: 7px 14px;
+    background: var(--ink);
+    color: var(--accent-gold-light);
+    border: 1px solid var(--accent-gold);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .comment-send-btn:hover { background: var(--ink-mid); }
+
+  /* ── DELETE COMMENT BTN ── */
+  .comment-delete-btn {
+    background: none; border: none; cursor: pointer;
+    color: rgba(192,57,43,0.45); font-size: 0.78rem;
+    padding: 2px 5px; border-radius: 2px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 1px;
+  }
+  .comment-delete-btn:hover { color: var(--red-seal); background: rgba(192,57,43,0.08); }
+
+  /* ── DELETE POST BTN ── */
+  .action-btn.danger { color: rgba(192,57,43,0.6); }
+  .action-btn.danger:hover { color: var(--red-seal); background: rgba(192,57,43,0.08); }
+
+  /* ══════════════════════════════
+     MODAL
+  ══════════════════════════════ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,18,8,0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--parchment);
+    border: 2px solid var(--accent-gold);
+    border-radius: 4px;
+    padding: 2rem;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 8px 8px 0 rgba(26,18,8,0.25);
+  }
+  .modal-title { font-family: 'Ma Shan Zheng', cursive; font-size: 1.4rem; color: var(--ink); margin-bottom: 0.5rem; letter-spacing: 0.1em; }
+  .modal-body { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.7; margin-bottom: 1.5rem; }
+  .modal-actions { display: flex; gap: 0.8rem; justify-content: center; }
+  .modal-btn {
+    padding: 8px 22px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.88rem; letter-spacing: 0.08em;
+    cursor: pointer; border-radius: 2px; transition: all 0.15s;
+  }
+  .modal-btn-primary { background: var(--ink); color: var(--accent-gold-light); border: 2px solid var(--accent-gold); }
+  .modal-btn-primary:hover { background: var(--ink-mid); }
+  .modal-btn-secondary { background: transparent; color: var(--ink-mid); border: 1px solid var(--border); }
+  .modal-btn-secondary:hover { background: var(--parchment-dark); }
+
+  /* ══════════════════════════════
+     TOAST
+  ══════════════════════════════ */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--ink); color: var(--accent-gold-light);
+    padding: 10px 24px; border-radius: 2px;
+    font-family: 'Noto Serif TC', serif; font-size: 0.88rem; letter-spacing: 0.08em;
+    border: 1px solid var(--accent-gold);
+    z-index: 2000; transition: transform 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ══════════════════════════════
+     EMPTY STATE
+  ══════════════════════════════ */
+  .empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--ink-light);
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 0.8rem; opacity: 0.4; }
+  .empty-state p { font-size: 0.88rem; line-height: 1.7; }
+
+  /* ══════════════════════════════
+     WATERMARK / DECORATION
+  ══════════════════════════════ */
+  .section-ornament {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-ornament::before,
+  .section-ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+  }
+  .ornament-text {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.3rem;
+    color: var(--ink);
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+  }
+
+  /* ══════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════ */
+  @media (max-width: 700px) {
+    .home-layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    .main-content { padding-left: 0; margin-top: 1rem; }
+    header { padding: 0 1rem; }
+    .logo span { display: none; }
+  }
+
+  /* ══════════════════════════════
+     ANIMATION
+  ══════════════════════════════ */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .post-card { animation: fadeIn 0.3s ease both; }
+  .post-card:nth-child(1) { animation-delay: 0.05s; }
+  .post-card:nth-child(2) { animation-delay: 0.1s; }
+  .post-card:nth-child(3) { animation-delay: 0.15s; }
+  .post-card:nth-child(4) { animation-delay: 0.2s; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex; gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 1.2rem;
+  }
+  .tab-item {
+    padding: 8px 20px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.88rem; letter-spacing: 0.08em;
+    cursor: pointer; color: var(--ink-light);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+  }
+  .tab-item.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 700; }
+  .tab-item:hover:not(.active) { color: var(--ink); }
+
+  /* ══════════════════════════════
+     USER PROFILE PAGE
+  ══════════════════════════════ */
+  .profile-page-container {
+    flex: 1;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    width: 100%;
+  }
+  .profile-hero-card {
+    background: var(--parchment);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem 2.5rem;
+    box-shadow: 6px 6px 0 rgba(139,105,20,0.12);
+    margin-bottom: 2rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  .profile-hero-card::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(196,169,106,0.3);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .profile-hero-avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-gold);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--parchment-dark);
+    font-size: 2.2rem;
+    color: var(--ink-light);
+    flex-shrink: 0;
+    box-shadow: 0 2px 12px rgba(184,134,11,0.18);
+  }
+  .profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-hero-info { flex: 1; }
+  .profile-hero-name {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.6rem;
+    color: var(--ink);
+    letter-spacing: 0.1em;
+  }
+  .profile-hero-id {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    margin-top: 0.2rem;
+    margin-bottom: 0.8rem;
+  }
+  .profile-hero-stats {
+    display: flex;
+    gap: 2rem;
+  }
+  .profile-hero-stats .stat-item { text-align: center; }
+  .profile-back-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--ink-mid);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+  .profile-back-btn:hover { background: var(--parchment-dark); border-color: var(--border-dark); color: var(--ink); }
+
+  /* clickable author in post card */
+  .post-author-link {
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .post-author-link:hover { color: var(--accent); text-decoration: underline; }
+  .post-avatar-link { cursor: pointer; }
+  .post-avatar-link:hover { opacity: 0.8; }
+
+  /* ── REMEMBER ME CHECKBOX ── */
+  .remember-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .remember-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--border-dark);
+    border-radius: 2px;
+    background: var(--parchment-dark);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .remember-row input[type="checkbox"]:checked {
+    background: var(--ink);
+    border-color: var(--accent-gold);
+  }
+  .remember-row input[type="checkbox"]:checked::after {
+    content: '✔';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--accent-gold-light);
+    font-size: 0.65rem;
+    line-height: 1;
+  }
+  .remember-row input[type="checkbox"]:hover { border-color: var(--accent-gold); }
+  .remember-label {
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    letter-spacing: 0.04em;
+  }
+
+  /* ══════════════════════════════
+     TWO-FACTOR CAPTCHA
+  ══════════════════════════════ */
+  .tfa-modal {
+    background: var(--parchment);
+    border: 2px solid var(--accent-gold);
+    border-radius: 6px;
+    padding: 1.8rem 1.8rem 1.5rem;
+    max-width: 440px;
+    width: 94%;
+    text-align: center;
+    position: relative;
+    box-shadow: 10px 10px 0 rgba(26,18,8,0.22);
+  }
+  .tfa-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem; color: var(--ink);
+    letter-spacing: 0.12em; margin-bottom: 0.2rem;
+  }
+  .tfa-subtitle {
+    font-size: 0.82rem; color: var(--ink-light);
+    margin-bottom: 1.2rem; line-height: 1.5;
+  }
+  .tfa-subtitle strong { color: var(--accent); font-weight: 700; }
+  .tfa-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .tfa-cell {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 2.5px solid var(--border);
+    background: var(--parchment-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    user-select: none;
+  }
+  .tfa-cell::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(180,150,80,0.10) 0%, rgba(100,160,80,0.08) 100%);
+    pointer-events: none;
+  }
+  .tfa-cell:hover { transform: scale(1.04); border-color: var(--accent-gold); box-shadow: 0 2px 10px rgba(184,134,11,0.18); }
+  .tfa-cell.selected {
+    border-color: var(--accent-gold);
+    background: rgba(184,134,11,0.12);
+    box-shadow: 0 0 0 3px rgba(184,134,11,0.25);
+  }
+  .tfa-cell.selected::after {
+    content: '✔';
+    position: absolute; top: 5px; right: 7px;
+    font-size: 0.85rem; color: var(--accent-gold);
+    font-weight: 900; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .tfa-error {
+    color: var(--red-seal);
+    font-size: 0.82rem;
+    margin-bottom: 0.6rem;
+    min-height: 1.2em;
+    transition: opacity 0.2s;
+  }
+  .tfa-actions { display: flex; gap: 0.8rem; justify-content: center; }
+  .tfa-submit-btn {
+    padding: 9px 28px;
+    background: var(--ink);
+    color: var(--accent-gold-light);
+    border: 2px solid var(--accent-gold);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem; letter-spacing: 0.12em;
+    cursor: pointer; border-radius: 2px;
+    transition: background 0.15s;
+  }
+  .tfa-submit-btn:hover { background: var(--ink-mid); }
+  .tfa-cancel-btn {
+    padding: 9px 18px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--border);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    cursor: pointer; border-radius: 2px;
+  }
+  .tfa-cancel-btn:hover { background: var(--parchment-dark); }
+  .tfa-attempts { font-size: 0.75rem; color: var(--ink-light); margin-top: 0.6rem; }
+
+  @keyframes tfaShake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  .tfa-grid.shake { animation: tfaShake 0.45s ease; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header id="main-header">
+  <div class="logo" onclick="goHome()">墨海書閣 <span>小說分享交流平台</span></div>
+  <nav id="main-nav">
+    <button class="nav-btn" onclick="showPage('feed')">書海分享</button>
+    <button class="nav-btn" id="nav-home-btn" onclick="showPage('home')" style="display:none">個人首頁</button>
+    <button class="nav-btn" id="nav-logout-btn" onclick="logout()" style="display:none">登出</button>
+    <button class="nav-btn primary" id="nav-login-btn" onclick="showPage('login')">登入</button>
+    <button class="nav-btn" id="nav-register-btn" onclick="showPage('register')">註冊</button>
+  </nav>
+</header>
+
+<!-- ══════════ LANDING PAGE ══════════ -->
+<div id="page-landing" class="page active">
+  <div class="hero">
+    <div class="hero-ornament">❧ ❧ ❧</div>
+    <h1>墨海書閣</h1>
+    <p class="hero-subtitle">以文會友，以書載道——小說愛好者的精神家園</p>
+    <div class="divider-ornament">── ◆ ──</div>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="showPage('register')">加入書閣</button>
+      <button class="btn btn-secondary" onclick="showPage('feed')">瀏覽書海</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LOGIN PAGE ══════════ -->
+<div id="page-login" class="page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2 class="auth-title">登入書閣</h2>
+      <p class="auth-desc">歡迎回來，請以筆名入閣</p>
+      <div class="form-group">
+        <label class="form-label" for="login-id">📖 帳號 ID</label>
+        <input class="form-input" id="login-id" type="text" placeholder="輸入您的 ID">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-pw">🔑 密碼</label>
+        <input class="form-input" id="login-pw" type="password" placeholder="輸入密碼">
+        <div class="error-msg" id="login-error" style="display:none"></div>
+      </div>
+      <label class="remember-row">
+        <input type="checkbox" id="login-remember">
+        <span class="remember-label">📋 記住我（下次自動填入帳號）</span>
+      </label>
+      <button class="submit-btn" onclick="doLogin()">入 閣</button>
+      <p class="auth-switch">尚未入閣？<span class="auth-link" onclick="showPage('register')">立即註冊</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ REGISTER PAGE ══════════ -->
+<div id="page-register" class="page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2 class="auth-title">加入書閣</h2>
+      <p class="auth-desc">創立您的筆名，開啟書寫之旅</p>
+      <div class="form-group">
+        <label class="form-label">🖼 頭像（可選）</label>
+        <div class="avatar-upload">
+          <div class="avatar-preview" id="reg-avatar-preview" onclick="document.getElementById('reg-avatar-file').click()">
+            <span id="reg-avatar-placeholder">＋</span>
+            <img id="reg-avatar-img" src="" alt="" style="display:none">
+          </div>
+          <input type="file" id="reg-avatar-file" accept="image/*" style="display:none" onchange="handleAvatarUpload('reg')">
+          <div class="upload-hint">點擊上傳頭像<br>支援 JPG / PNG 格式</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-id">📋 帳號 ID（英數字）</label>
+        <input class="form-input" id="reg-id" type="text" placeholder="例如：reader_123">
+        <div class="error-msg" id="reg-id-error"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-name">✒ 筆名 / 顯示名稱</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="例如：書海漫遊者">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-pw">🔑 密碼</label>
+        <input class="form-input" id="reg-pw" type="password" placeholder="至少 6 個字元">
+        <div class="error-msg" id="reg-error"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-bio">📝 個人介紹（可選）</label>
+        <textarea class="form-input" id="reg-bio" rows="3" placeholder="用幾句話介紹自己，讓書閣中的朋友認識你……" style="resize:vertical;line-height:1.7;font-family:'Noto Serif TC',serif;"></textarea>
+      </div>
+      <button class="submit-btn" onclick="doRegister()">立 即 入 閣</button>
+      <p class="auth-switch">已有帳號？<span class="auth-link" onclick="showPage('login')">立即登入</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HOME PAGE ══════════ -->
+<div id="page-home" class="page">
+  <div class="home-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="profile-section">
+        <div class="profile-avatar" id="home-sidebar-avatar">
+          <span id="home-sidebar-avatar-placeholder">📚</span>
+          <img id="home-sidebar-avatar-img" src="" alt="" style="display:none">
+        </div>
+        <div class="profile-name" id="home-sidebar-name">—</div>
+        <div class="profile-id" id="home-sidebar-id">@—</div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-num" id="home-post-count">0</div>
+            <div class="stat-label">篇文章</div>
+          </div>
+        </div>
+        <!-- Bio display -->
+        <div id="home-bio-display" class="profile-bio placeholder">尚無個人介紹</div>
+        <!-- Bio edit toggle -->
+        <button class="bio-edit-btn" id="home-bio-edit-btn" onclick="openBioEdit()">✏ 編輯介紹</button>
+        <!-- Bio edit form (hidden by default) -->
+        <div id="home-bio-form" style="display:none;width:100%">
+          <textarea class="bio-edit-area" id="home-bio-input" placeholder="用幾句話介紹自己……"></textarea>
+          <div class="bio-save-row">
+            <button class="bio-cancel-btn" onclick="closeBioEdit()">取消</button>
+            <button class="bio-save-btn" onclick="saveBio()">儲存</button>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="sidebar-item active" onclick="switchHomeTab('my-posts')"><span class="sidebar-icon">📜</span> 我的文章</div>
+        <div class="sidebar-item" onclick="showPage('feed')"><span class="sidebar-icon">🌊</span> 書海分享</div>
+      </div>
+      <button class="new-post-btn" onclick="showPage('compose')">✦ 新增貼文</button>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content">
+      <div class="section-ornament"><span class="ornament-text">我的文章</span></div>
+      <div id="home-post-list" class="post-list">
+        <div class="empty-state">
+          <div class="empty-icon">📜</div>
+          <p>尚無文章<br>點選「新增貼文」開始書寫</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ COMPOSE PAGE ══════════ -->
+<div id="page-compose" class="page">
+  <div class="compose-container">
+    <div class="section-ornament" style="margin-top:0.5rem"><span class="ornament-text">新增貼文</span></div>
+    <div class="compose-card">
+      <div class="compose-author">
+        <div class="compose-author-avatar" id="compose-avatar">
+          <span id="compose-avatar-placeholder">📚</span>
+          <img id="compose-avatar-img" src="" alt="" style="display:none">
+        </div>
+        <div class="compose-author-info">
+          <div class="name" id="compose-name">—</div>
+          <div class="id" id="compose-id">@—</div>
+        </div>
+      </div>
+      <input class="compose-input" id="compose-title" placeholder="文章主題（必填）">
+      <textarea class="compose-textarea" id="compose-body" placeholder="書寫您的故事、感悟或評論……"></textarea>
+      <input type="file" id="compose-img-file" accept="image/*" style="display:none" onchange="handleComposeImage()">
+      <div class="image-upload-area" id="compose-img-area" onclick="document.getElementById('compose-img-file').click()">
+        <span class="upload-icon">🖼</span>
+        點擊上傳圖片（可選）
+      </div>
+      <div id="compose-img-preview" style="display:none; margin-bottom:1rem">
+        <div class="image-preview-wrap">
+          <img id="compose-preview-img" src="" alt="">
+          <button class="remove-img" onclick="removeComposeImage()">✕</button>
+        </div>
+      </div>
+      <div class="error-msg" id="compose-error" style="display:none; margin-bottom:0.5rem"></div>
+      <div class="compose-actions">
+        <span class="cancel-link" onclick="showPage('home')">← 取消</span>
+        <button class="publish-btn" onclick="publishPost()">發 布</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FEED PAGE ══════════ -->
+<div id="page-feed" class="page">
+  <div class="feed-container">
+    <div class="section-ornament" style="margin-top:0.5rem"><span class="ornament-text">書海分享</span></div>
+    <div id="feed-post-list" class="post-list">
+      <div class="empty-state">
+        <div class="empty-icon">🌊</div>
+        <p>書海尚靜，等待第一篇文章<br>登入後即可開始分享</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PROFILE PAGE ══════════ -->
+<div id="page-profile" class="page">
+  <div class="profile-page-container">
+    <div class="profile-hero-card">
+      <div class="profile-hero-avatar" id="prof-avatar">
+        <span id="prof-avatar-ph">📚</span>
+        <img id="prof-avatar-img" src="" alt="" style="display:none">
+      </div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name" id="prof-name">—</div>
+        <div class="profile-hero-id" id="prof-id">@—</div>
+        <div class="profile-hero-stats">
+          <div class="stat-item">
+            <div class="stat-num" id="prof-post-count">0</div>
+            <div class="stat-label">篇文章</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num" id="prof-like-count">0</div>
+            <div class="stat-label">獲得讚</div>
+          </div>
+        </div>
+        <div class="profile-hero-bio" id="prof-bio" style="display:none"></div>
+      </div>
+      <button class="profile-back-btn" id="prof-back-btn" onclick="history.back() || showPage('feed')">← 返回</button>
+    </div>
+    <div class="section-ornament"><span class="ornament-text" id="prof-posts-label">TA 的文章</span></div>
+    <div id="prof-post-list" class="post-list"></div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <div class="modal-title">尚未入閣</div>
+    <div class="modal-body">是否已有書閣帳號？<br>登入後即可進行評論與互動。</div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-primary" onclick="closeModal(); showPage('login')">登 入</button>
+      <button class="modal-btn modal-btn-primary" onclick="closeModal(); showPage('register')" style="background:var(--accent);border-color:var(--accent);color:var(--parchment)">註 冊</button>
+      <button class="modal-btn modal-btn-secondary" onclick="closeModal()">取 消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DELETE CONFIRM MODAL ══════════ -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <div class="modal-title" id="delete-modal-title">確認刪除</div>
+    <div class="modal-body" id="delete-modal-body">此操作無法復原，確定要刪除嗎？</div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="delete-modal-confirm"
+        style="background:var(--red-seal);color:#fff;border:2px solid var(--red-seal);"
+        onclick="confirmDelete()">確 認 刪 除</button>
+      <button class="modal-btn modal-btn-secondary" onclick="closeDeleteModal()">取 消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TWO-FACTOR CAPTCHA MODAL ══════════ -->
+<div class="modal-overlay" id="tfa-modal">
+  <div class="tfa-modal">
+    <div class="tfa-title">🧩 雙重認證</div>
+    <div class="tfa-subtitle">
+      請選出所有包含 <strong>壁虎</strong> 的圖片<br>
+      <span style="font-size:0.75rem;opacity:0.7">🦎 = 壁虎，選對全部即可登入書閣</span>
+    </div>
+    <div class="tfa-grid" id="tfa-grid"></div>
+    <div class="tfa-error" id="tfa-error"></div>
+    <div class="tfa-actions">
+      <button class="tfa-cancel-btn" onclick="closeTwoFactor()">取消</button>
+      <button class="tfa-submit-btn" onclick="verifyTwoFactor()">✔ 確認選擇</button>
+    </div>
+    <div class="tfa-attempts" id="tfa-attempts"></div>
+  </div>
+</div>
+
+<!-- ══════════ TOAST ══════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+let users = JSON.parse(localStorage.getItem('mh_users') || '[]');
+let posts = JSON.parse(localStorage.getItem('mh_posts') || '[]');
+let currentUser = JSON.parse(localStorage.getItem('mh_current') || 'null');
+let composeImageData = null;
+let regAvatarData = null;
+let _pendingDelete = null; // { type: 'post'|'comment', postId, commentIdx }
+let _pendingLoginUser = null; // user waiting for 2FA
+let _tfaGeckoIndices = [];  // which grid cells are geckos
+let _tfaSelected = new Set(); // user-selected cells
+let _tfaAttempts = 0;        // remaining attempts
+
+function saveData() {
+  localStorage.setItem('mh_users', JSON.stringify(users));
+  localStorage.setItem('mh_posts', JSON.stringify(posts));
+  localStorage.setItem('mh_current', JSON.stringify(currentUser));
+}
+
+// ════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-' + name);
+  if (pg) pg.classList.add('active');
+  updateNav();
+  window.scrollTo(0, 0);
+
+  if (name === 'home') renderHomePosts();
+  if (name === 'feed') renderFeedPosts();
+  if (name === 'compose') {
+    if (!currentUser) { showPage('login'); return; }
+    setupCompose();
+  }
+  if (name === 'home') {
+    if (!currentUser) { showPage('login'); return; }
+    setupHomeSidebar();
+  }
+}
+
+// ════════════════════════════════
+// USER PROFILE VIEW
+// ════════════════════════════════
+let _prevPage = 'feed'; // track where we came from for back button
+
+function viewProfile(userId) {
+  // Don't let users view themselves via this route — send to home instead
+  if (currentUser && userId === currentUser.id) {
+    showPage('home');
+    return;
+  }
+  const user = users.find(u => u.id === userId);
+  if (!user) { showToast('找不到該用戶'); return; }
+
+  // Store current page for back button
+  const activePage = document.querySelector('.page.active');
+  _prevPage = activePage ? activePage.id.replace('page-', '') : 'feed';
+
+  // Populate hero card
+  document.getElementById('prof-name').textContent = user.name;
+  document.getElementById('prof-id').textContent = '@' + user.id;
+  setAvatarEl('prof-avatar-img', 'prof-avatar-ph', user.avatar, user.name);
+
+  const userPosts = posts.filter(p => p.authorId === userId);
+  const totalLikes = userPosts.reduce((sum, p) => sum + p.likes.length, 0);
+  document.getElementById('prof-post-count').textContent = userPosts.length;
+  document.getElementById('prof-like-count').textContent = totalLikes;
+  document.getElementById('prof-posts-label').textContent = user.name + ' 的文章';
+
+  // Bio
+  const profBioEl = document.getElementById('prof-bio');
+  if (user.bio) {
+    profBioEl.textContent = user.bio;
+    profBioEl.style.display = '';
+  } else {
+    profBioEl.style.display = 'none';
+  }
+
+  // Back button: return to previous page
+  document.getElementById('prof-back-btn').onclick = () => showPage(_prevPage);
+
+  // Render that user's posts (read-only, no delete button)
+  const listEl = document.getElementById('prof-post-list');
+  if (userPosts.length === 0) {
+    listEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📜</div><p>${escHtml(user.name)} 尚無文章</p></div>`;
+  } else {
+    listEl.innerHTML = userPosts.map(p => renderPostCard(p, true, true)).join('');
+  }
+
+  // Show the profile page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-profile').classList.add('active');
+  updateNav();
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  if (currentUser) showPage('home');
+  else showPage('landing');
+}
+
+function updateNav() {
+  const loginBtn = document.getElementById('nav-login-btn');
+  const registerBtn = document.getElementById('nav-register-btn');
+  const homeBtn = document.getElementById('nav-home-btn');
+  const logoutBtn = document.getElementById('nav-logout-btn');
+  if (currentUser) {
+    loginBtn.style.display = 'none';
+    registerBtn.style.display = 'none';
+    homeBtn.style.display = '';
+    logoutBtn.style.display = '';
+  } else {
+    loginBtn.style.display = '';
+    registerBtn.style.display = '';
+    homeBtn.style.display = 'none';
+    logoutBtn.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════
+// AUTH
+// ════════════════════════════════
+function handleAvatarUpload(prefix) {
+  const file = document.getElementById(prefix + '-avatar-file').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    regAvatarData = e.target.result;
+    document.getElementById(prefix + '-avatar-img').src = regAvatarData;
+    document.getElementById(prefix + '-avatar-img').style.display = '';
+    document.getElementById(prefix + '-avatar-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function doRegister() {
+  const id = document.getElementById('reg-id').value.trim();
+  const name = document.getElementById('reg-name').value.trim();
+  const pw = document.getElementById('reg-pw').value;
+  document.getElementById('reg-id-error').textContent = '';
+  document.getElementById('reg-error').textContent = '';
+
+  if (!id || !/^[a-zA-Z0-9_]+$/.test(id)) {
+    document.getElementById('reg-id-error').textContent = '帳號 ID 僅限英數字與底線';
+    return;
+  }
+  if (!name) { showToast('請輸入筆名'); return; }
+  if (pw.length < 6) {
+    document.getElementById('reg-error').textContent = '密碼至少 6 個字元';
+    return;
+  }
+  if (users.find(u => u.id === id)) {
+    document.getElementById('reg-id-error').textContent = '此 ID 已被使用';
+    return;
+  }
+
+  const bio = document.getElementById('reg-bio').value.trim();
+  const user = { id, name, pw, avatar: regAvatarData || null, bio: bio || '' };
+  users.push(user);
+  currentUser = user;
+  regAvatarData = null;
+  saveData();
+  showToast('歡迎入閣，' + name + '！');
+  setupHomeSidebar();
+  showPage('home');
+}
+
+function doLogin() {
+  const id = document.getElementById('login-id').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  const err = document.getElementById('login-error');
+  const remember = document.getElementById('login-remember').checked;
+  err.style.display = 'none';
+
+  const user = users.find(u => u.id === id && u.pw === pw);
+  if (!user) {
+    err.textContent = '帳號或密碼錯誤';
+    err.style.display = '';
+    return;
+  }
+  // Save or clear remembered ID
+  if (remember) {
+    localStorage.setItem('mh_remember_id', id);
+  } else {
+    localStorage.removeItem('mh_remember_id');
+  }
+  // 密碼正確 → 發動雙重認證
+  _pendingLoginUser = user;
+  showTwoFactor();
+}
+
+// ════════════════════════════════
+// TWO-FACTOR CAPTCHA
+// ════════════════════════════════
+const TFA_OTHERS = ['🐸','🐛','🦋','🐞','🐢','🐍','🦀','🪰','🐜','🐟','🐦','🌿'];
+
+function showTwoFactor() {
+  _tfaSelected = new Set();
+  _tfaAttempts = 3;
+  _buildTfaGrid();
+  document.getElementById('tfa-error').textContent = '';
+  document.getElementById('tfa-attempts').textContent = '剩餘機會：' + _tfaAttempts + ' 次';
+  document.getElementById('tfa-modal').classList.add('open');
+}
+
+function _buildTfaGrid() {
+  // Pick 3-5 gecko positions randomly
+  const geckoCount = 3 + Math.floor(Math.random() * 3); // 3,4, or 5
+  const positions = Array.from({length: 9}, (_, i) => i);
+  // Fisher-Yates shuffle
+  for (let i = positions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [positions[i], positions[j]] = [positions[j], positions[i]];
+  }
+  _tfaGeckoIndices = positions.slice(0, geckoCount).sort();
+
+  // Build 9 cells: geckos at those positions, others elsewhere
+  const cells = [];
+  const usedOthers = [...TFA_OTHERS].sort(() => Math.random() - 0.5);
+  let otherIdx = 0;
+  for (let i = 0; i < 9; i++) {
+    if (_tfaGeckoIndices.includes(i)) {
+      cells.push('🦎'); // gecko
+    } else {
+      cells.push(usedOthers[otherIdx++ % usedOthers.length]);
+    }
+  }
+
+  const grid = document.getElementById('tfa-grid');
+  grid.classList.remove('shake');
+  grid.innerHTML = cells.map((emoji, idx) => `
+    <div class="tfa-cell" id="tfa-cell-${idx}" onclick="toggleGridCell(${idx})">
+      ${emoji}
+    </div>
+  `).join('');
+
+  _tfaSelected = new Set();
+}
+
+function toggleGridCell(idx) {
+  const cell = document.getElementById('tfa-cell-' + idx);
+  if (!cell) return;
+  if (_tfaSelected.has(idx)) {
+    _tfaSelected.delete(idx);
+    cell.classList.remove('selected');
+  } else {
+    _tfaSelected.add(idx);
+    cell.classList.add('selected');
+  }
+}
+
+function verifyTwoFactor() {
+  const selected = [..._tfaSelected].sort();
+  const correct = [..._tfaGeckoIndices].sort();
+  const isCorrect =
+    selected.length === correct.length &&
+    selected.every((v, i) => v === correct[i]);
+
+  if (isCorrect) {
+    // 通過 → 完成登入
+    document.getElementById('tfa-modal').classList.remove('open');
+    currentUser = _pendingLoginUser;
+    _pendingLoginUser = null;
+    saveData();
+    showToast('歡迎回閣，' + currentUser.name + '！');
+    setupHomeSidebar();
+    showPage('home');
+  } else {
+    // 失敗
+    _tfaAttempts--;
+    const grid = document.getElementById('tfa-grid');
+    grid.classList.remove('shake');
+    void grid.offsetWidth; // reflow to restart animation
+    grid.classList.add('shake');
+
+    if (_tfaAttempts <= 0) {
+      document.getElementById('tfa-error').textContent = '認證失敗，請重新登入';
+      document.getElementById('tfa-attempts').textContent = '';
+      setTimeout(() => {
+        closeTwoFactor();
+      }, 1500);
+    } else {
+      document.getElementById('tfa-error').textContent =
+        `選擇錯誤，請重新選擇所有壁虎！`;
+      document.getElementById('tfa-attempts').textContent =
+        '剩餘機會：' + _tfaAttempts + ' 次';
+      // Rebuild grid with new random layout
+      setTimeout(() => {
+        document.getElementById('tfa-error').textContent = '';
+        _buildTfaGrid();
+      }, 700);
+    }
+  }
+}
+
+function closeTwoFactor() {
+  document.getElementById('tfa-modal').classList.remove('open');
+  _pendingLoginUser = null;
+  _tfaSelected = new Set();
+  _tfaAttempts = 0;
+}
+
+function logout() {
+  currentUser = null;
+  saveData();
+  showToast('已登出書閣');
+  // Clear remembered ID on explicit logout
+  localStorage.removeItem('mh_remember_id');
+  showPage('landing');
+}
+
+// ════════════════════════════════
+// PROFILE / SIDEBAR
+// ════════════════════════════════
+function setupHomeSidebar() {
+  if (!currentUser) return;
+  document.getElementById('home-sidebar-name').textContent = currentUser.name;
+  document.getElementById('home-sidebar-id').textContent = '@' + currentUser.id;
+  setAvatarEl('home-sidebar-avatar-img', 'home-sidebar-avatar-placeholder', currentUser.avatar, currentUser.name);
+  const myPosts = posts.filter(p => p.authorId === currentUser.id);
+  document.getElementById('home-post-count').textContent = myPosts.length;
+  // Bio
+  const bioEl = document.getElementById('home-bio-display');
+  if (currentUser.bio) {
+    bioEl.textContent = currentUser.bio;
+    bioEl.classList.remove('placeholder');
+  } else {
+    bioEl.textContent = '尚無個人介紹';
+    bioEl.classList.add('placeholder');
+  }
+}
+
+function openBioEdit() {
+  document.getElementById('home-bio-input').value = currentUser.bio || '';
+  document.getElementById('home-bio-display').style.display = 'none';
+  document.getElementById('home-bio-edit-btn').style.display = 'none';
+  document.getElementById('home-bio-form').style.display = '';
+  document.getElementById('home-bio-input').focus();
+}
+
+function closeBioEdit() {
+  document.getElementById('home-bio-form').style.display = 'none';
+  document.getElementById('home-bio-display').style.display = '';
+  document.getElementById('home-bio-edit-btn').style.display = '';
+}
+
+function saveBio() {
+  const bio = document.getElementById('home-bio-input').value.trim();
+  currentUser.bio = bio;
+  // Also update the user object in the users array
+  const userInList = users.find(u => u.id === currentUser.id);
+  if (userInList) userInList.bio = bio;
+  saveData();
+  closeBioEdit();
+  setupHomeSidebar();
+  showToast('個人介紹已更新');
+}
+
+function setupCompose() {
+  if (!currentUser) return;
+  document.getElementById('compose-name').textContent = currentUser.name;
+  document.getElementById('compose-id').textContent = '@' + currentUser.id;
+  setAvatarEl('compose-avatar-img', 'compose-avatar-placeholder', currentUser.avatar, currentUser.name);
+  document.getElementById('compose-title').value = '';
+  document.getElementById('compose-body').value = '';
+  removeComposeImage();
+  document.getElementById('compose-error').style.display = 'none';
+}
+
+function setAvatarEl(imgId, phId, avatarData, name) {
+  const img = document.getElementById(imgId);
+  const ph = document.getElementById(phId);
+  if (avatarData) {
+    img.src = avatarData;
+    img.style.display = '';
+    if (ph) ph.style.display = 'none';
+  } else {
+    if (img) img.style.display = 'none';
+    if (ph) { ph.style.display = ''; ph.textContent = name ? name[0] : '📚'; }
+  }
+}
+
+// ════════════════════════════════
+// COMPOSE / PUBLISH
+// ════════════════════════════════
+function handleComposeImage() {
+  const file = document.getElementById('compose-img-file').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    composeImageData = e.target.result;
+    document.getElementById('compose-preview-img').src = composeImageData;
+    document.getElementById('compose-img-preview').style.display = '';
+    document.getElementById('compose-img-area').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeComposeImage() {
+  composeImageData = null;
+  document.getElementById('compose-img-preview').style.display = 'none';
+  document.getElementById('compose-img-area').style.display = '';
+  document.getElementById('compose-img-file').value = '';
+}
+
+function publishPost() {
+  const title = document.getElementById('compose-title').value.trim();
+  const body = document.getElementById('compose-body').value.trim();
+  const errEl = document.getElementById('compose-error');
+  if (!title) {
+    errEl.textContent = '請輸入文章主題';
+    errEl.style.display = '';
+    return;
+  }
+  if (!body) {
+    errEl.textContent = '請輸入文章內容';
+    errEl.style.display = '';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const post = {
+    id: Date.now(),
+    authorId: currentUser.id,
+    authorName: currentUser.name,
+    authorAvatar: currentUser.avatar,
+    title,
+    body,
+    image: composeImageData,
+    time: new Date().toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+    likes: [],
+    comments: []
+  };
+  posts.unshift(post);
+  saveData();
+  showToast('文章已發布至書海！');
+  setupHomeSidebar();
+  showPage('home');
+}
+
+// ════════════════════════════════
+// RENDER POSTS
+// ════════════════════════════════
+function renderHomePosts() {
+  if (!currentUser) return;
+  const myPosts = posts.filter(p => p.authorId === currentUser.id);
+  const el = document.getElementById('home-post-list');
+  if (myPosts.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📜</div><p>尚無文章<br>點選「新增貼文」開始書寫</p></div>`;
+    return;
+  }
+  el.innerHTML = myPosts.map(p => renderPostCard(p, false)).join('');
+  setupCommentListeners();
+}
+
+function renderFeedPosts() {
+  const el = document.getElementById('feed-post-list');
+  if (posts.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🌊</div><p>書海尚靜，等待第一篇文章<br>登入後即可開始分享</p></div>`;
+    return;
+  }
+  el.innerHTML = posts.map(p => renderPostCard(p, true)).join('');
+  setupCommentListeners();
+}
+
+function renderPostCard(p, showComments, readOnly = false) {
+  const avatarHtml = p.authorAvatar
+    ? `<img src="${p.authorAvatar}" alt="">`
+    : `<span style="font-size:1rem">${p.authorName[0]}</span>`;
+
+  const liked = currentUser && p.likes.includes(currentUser.id);
+  const imgHtml = p.image ? `<img class="post-image" src="${p.image}" alt="文章圖片">` : '';
+
+  // Only show profile link when NOT already on the profile page and NOT the post owner
+  const isOwnPost = currentUser && p.authorId === currentUser.id;
+  const showProfileLink = !isOwnPost && !readOnly;
+  const authorNameHtml = showProfileLink
+    ? `<div class="post-author post-author-link" onclick="viewProfile('${p.authorId}')">${escHtml(p.authorName)}</div>`
+    : `<div class="post-author">${escHtml(p.authorName)}</div>`;
+  const avatarWrapHtml = showProfileLink
+    ? `<div class="post-avatar post-avatar-link" onclick="viewProfile('${p.authorId}')">${avatarHtml}</div>`
+    : `<div class="post-avatar">${avatarHtml}</div>`;
+
+  const commentsHtml = p.comments.map((c, idx) => {
+    const cavHtml = c.avatar
+      ? `<img src="${c.avatar}" alt="">`
+      : `<span style="font-size:0.7rem">${c.authorName[0]}</span>`;
+    const canDeleteComment = !readOnly && currentUser && c.authorId === currentUser.id;
+    const delCommentBtn = canDeleteComment
+      ? `<button class="comment-delete-btn" title="刪除留言" onclick="promptDeleteComment(${p.id}, ${idx})">✕</button>`
+      : '';
+    return `<div class="comment-item" id="cmt-${p.id}-${idx}">
+      <div class="comment-avatar">${cavHtml}</div>
+      <div class="comment-body">
+        <span class="comment-author">${escHtml(c.authorName)}</span>
+        <div class="comment-text">${escHtml(c.text)}</div>
+      </div>
+      ${delCommentBtn}
+    </div>`;
+  }).join('');
+
+  const commentInputHtml = !readOnly && currentUser
+    ? `<div class="comment-input-area">
+        <input class="comment-input" id="ci-${p.id}" type="text" placeholder="留下您的評論…">
+        <button class="comment-send-btn" onclick="sendComment(${p.id})">送出</button>
+       </div>`
+    : (!readOnly ? `<div style="font-size:0.78rem;color:var(--ink-light);margin-top:0.5rem;padding:6px 0">請登入後留言</div>` : '');
+
+  const isOwner = !readOnly && currentUser && p.authorId === currentUser.id;
+  const deletePostBtn = isOwner
+    ? `<button class="action-btn danger" onclick="promptDeletePost(${p.id})" title="刪除貼文" style="margin-left:auto"><span class="icon">🗑</span> 刪除</button>`
+    : '';
+
+  return `<div class="post-card" id="post-${p.id}">
+    <div class="post-header">
+      ${avatarWrapHtml}
+      <div class="post-meta">
+        ${authorNameHtml}
+        <div class="post-author-id">@${escHtml(p.authorId)}</div>
+      </div>
+      <div class="post-time">${p.time}</div>
+    </div>
+    <div class="post-title">${escHtml(p.title)}</div>
+    <div class="post-content truncated">${escHtml(p.body)}</div>
+    ${imgHtml}
+    <div class="post-actions">
+      <button class="action-btn ${liked ? 'liked' : ''}" onclick="toggleLike(${p.id})">
+        <span class="icon">${liked ? '♥' : '♡'}</span> ${p.likes.length} 讚
+      </button>
+      <button class="action-btn" onclick="toggleComments(${p.id})">
+        <span class="icon">💬</span> ${p.comments.length} 評論
+      </button>
+      ${deletePostBtn}
+    </div>
+    <div class="comments-section hidden" id="cs-${p.id}">
+      ${commentsHtml}
+      ${commentInputHtml}
+    </div>
+  </div>`;
+}
+
+function setupCommentListeners() {}
+
+function toggleComments(postId) {
+  if (!currentUser) {
+    document.getElementById('auth-modal').classList.add('open');
+    return;
+  }
+  const cs = document.getElementById('cs-' + postId);
+  if (cs) cs.classList.toggle('hidden');
+}
+
+function toggleLike(postId) {
+  if (!currentUser) {
+    document.getElementById('auth-modal').classList.add('open');
+    return;
+  }
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  const idx = post.likes.indexOf(currentUser.id);
+  if (idx === -1) post.likes.push(currentUser.id);
+  else post.likes.splice(idx, 1);
+  saveData();
+  // Re-render current page
+  const inFeed = !!document.getElementById('feed-post-list').querySelector(`#post-${postId}`);
+  if (inFeed) renderFeedPosts();
+  else renderHomePosts();
+}
+
+function sendComment(postId) {
+  if (!currentUser) return;
+  const input = document.getElementById('ci-' + postId);
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  post.comments.push({
+    authorId: currentUser.id,
+    authorName: currentUser.name,
+    avatar: currentUser.avatar,
+    text
+  });
+  saveData();
+  const inFeed = !!document.getElementById('feed-post-list').querySelector(`#post-${postId}`);
+  if (inFeed) renderFeedPosts();
+  else renderHomePosts();
+  // Re-open comments
+  const cs = document.getElementById('cs-' + postId);
+  if (cs) cs.classList.remove('hidden');
+}
+
+// ════════════════════════════════
+// DELETE POST / COMMENT
+// ════════════════════════════════
+function promptDeletePost(postId) {
+  _pendingDelete = { type: 'post', postId };
+  document.getElementById('delete-modal-title').textContent = '確認刪除貼文';
+  document.getElementById('delete-modal-body').textContent = '刪除後無法復原，確定要刪除這篇文章嗎？';
+  document.getElementById('delete-modal').classList.add('open');
+}
+
+function promptDeleteComment(postId, commentIdx) {
+  _pendingDelete = { type: 'comment', postId, commentIdx };
+  document.getElementById('delete-modal-title').textContent = '確認刪除留言';
+  document.getElementById('delete-modal-body').textContent = '確定要刪除這則留言嗎？';
+  document.getElementById('delete-modal').classList.add('open');
+}
+
+function closeDeleteModal() {
+  _pendingDelete = null;
+  document.getElementById('delete-modal').classList.remove('open');
+}
+
+function confirmDelete() {
+  if (!_pendingDelete) return;
+  if (_pendingDelete.type === 'post') {
+    const idx = posts.findIndex(p => p.id === _pendingDelete.postId);
+    if (idx !== -1) posts.splice(idx, 1);
+    saveData();
+    setupHomeSidebar();
+    closeDeleteModal();
+    showToast('貼文已刪除');
+    // Re-render whichever list is visible
+    const inFeed = document.getElementById('page-feed').classList.contains('active');
+    if (inFeed) renderFeedPosts();
+    else renderHomePosts();
+  } else if (_pendingDelete.type === 'comment') {
+    const post = posts.find(p => p.id === _pendingDelete.postId);
+    if (post) post.comments.splice(_pendingDelete.commentIdx, 1);
+    saveData();
+    closeDeleteModal();
+    showToast('留言已刪除');
+    const inFeed = document.getElementById('page-feed').classList.contains('active');
+    if (inFeed) renderFeedPosts();
+    else renderHomePosts();
+    // Keep comments section open after re-render
+    const cs = document.getElementById('cs-' + _pendingDelete.postId);
+    if (cs) cs.classList.remove('hidden');
+  }
+  _pendingDelete = null;
+}
+
+// ════════════════════════════════
+// MODAL / TOAST
+// ════════════════════════════════
+function closeModal() {
+  document.getElementById('auth-modal').classList.remove('open');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+updateNav();
+if (currentUser) {
+  setupHomeSidebar();
+}
+
+// Pre-fill login ID if remembered
+(function initRememberMe() {
+  const savedId = localStorage.getItem('mh_remember_id');
+  if (savedId) {
+    const loginIdEl = document.getElementById('login-id');
+    const rememberEl = document.getElementById('login-remember');
+    if (loginIdEl) loginIdEl.value = savedId;
+    if (rememberEl) rememberEl.checked = true;
+  }
+})();
+
+// ════════════════════════════════
+// ENTER KEY BINDINGS
+// ════════════════════════════════
+
+// Helper: bind Enter on a plain input to a callback
+function bindEnter(id, fn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      fn();
+    }
+  });
+}
+
+// Helper: bind Ctrl+Enter on a textarea to a callback
+function bindCtrlEnter(id, fn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      fn();
+    }
+  });
+}
+
+// ── 登入頁 ──
+bindEnter('login-id', doLogin);
+bindEnter('login-pw', doLogin);
+
+// ── 註冊頁（一般欄位 Enter 送出；bio textarea 用 Ctrl+Enter）──
+bindEnter('reg-id',   doRegister);
+bindEnter('reg-name', doRegister);
+bindEnter('reg-pw',   doRegister);
+bindCtrlEnter('reg-bio', doRegister);
+
+// ── Bio 編輯框（Ctrl+Enter 儲存）──
+bindCtrlEnter('home-bio-input', saveBio);
+
+// ── 留言輸入框（動態產生，用事件委派）──
+// 監聽整個 document，對 .comment-input 的 Enter 直接送出留言
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && e.target.classList.contains('comment-input')) {
+    e.preventDefault();
+    // 從 input 的 id "ci-{postId}" 取得 postId
+    const postId = Number(e.target.id.replace('ci-', ''));
+    if (postId) sendComment(postId);
+  }
+});
+</script>
+</body>
+</html>
