@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>墨海書閣 — 小說分享交流平台</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #1a1208;
@@ -25,7 +25,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Noto Serif TC', serif;
+    font-family: 'Noto Serif TC', 'SimSun', 'PMingLiU', '宋體', serif;
     background: var(--parchment);
     color: var(--ink);
     min-height: 100vh;
@@ -41,7 +41,7 @@
 
   /* ── TYPOGRAPHY ── */
   .title-font { font-family: 'Ma Shan Zheng', cursive; }
-  .sub-font { font-family: 'ZCOOL XiaoWei', serif; }
+  .sub-font { font-family: 'Noto Serif TC', 'SimSun', serif; }
 
   /* ── PAGES ── */
   .page { display: none; min-height: 100vh; }
@@ -121,7 +121,6 @@
     text-shadow: 2px 2px 0 var(--parchment-deep);
   }
   .hero-subtitle {
-    font-family: 'ZCOOL XiaoWei', serif;
     font-size: 1.1rem;
     color: var(--ink-light);
     margin: 1rem 0 2.5rem;
@@ -452,7 +451,6 @@
   .post-author-id { font-size: 0.75rem; color: var(--ink-light); }
   .post-time { font-size: 0.75rem; color: var(--ink-light); margin-left: auto; }
   .post-title {
-    font-family: 'ZCOOL XiaoWei', serif;
     font-size: 1.15rem;
     color: var(--ink);
     margin-bottom: 0.5rem;
@@ -465,7 +463,16 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .post-image { width: 100%; max-height: 240px; object-fit: cover; border-radius: 2px; margin-bottom: 0.8rem; border: 1px solid var(--border); }
+  .post-images-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 0.8rem; }
+  .post-images-grid .image-wrapper { flex: 1 1 calc(50% - 4px); max-height: 200px; position: relative; }
+  .post-images-grid .image-wrapper .post-image { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; border: 1px solid var(--border); display: block; margin: 0; }
+  .post-images-grid.single-image .image-wrapper { flex: 1 1 100%; max-height: 280px; }
+  .more-images-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.6);
+    color: white; font-size: 2rem; display: flex; align-items: center; justify-content: center;
+    border-radius: 2px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+  }
+  .more-images-overlay:hover { background: rgba(0,0,0,0.75); }
   .post-actions { display: flex; align-items: center; gap: 1.5rem; padding-top: 0.6rem; border-top: 1px solid var(--parchment-deep); }
   .action-btn {
     display: flex; align-items: center; gap: 0.4rem;
@@ -558,13 +565,16 @@
   }
   .image-upload-area:hover { border-color: var(--accent-gold); color: var(--ink); }
   .image-upload-area .upload-icon { font-size: 2rem; margin-bottom: 0.4rem; display: block; }
+  .compose-img-preview-list {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;
+  }
   .image-preview-wrap { position: relative; display: inline-block; }
-  .image-preview-wrap img { max-height: 160px; border-radius: 2px; border: 1px solid var(--border); display: block; }
+  .image-preview-wrap img { max-height: 120px; border-radius: 2px; border: 1px solid var(--border); display: block; }
   .remove-img {
-    position: absolute; top: -8px; right: -8px;
-    width: 22px; height: 22px;
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px;
     background: var(--red-seal); color: white; border: none; border-radius: 50%;
-    font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .compose-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
   .publish-btn {
@@ -1010,15 +1020,52 @@
     80% { transform: translateX(5px); }
   }
   .tfa-grid.shake { animation: tfaShake 0.45s ease; }
+
+  /* ══════════════════════════════
+     LIGHTBOX
+  ══════════════════════════════ */
+  .lightbox-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15, 12, 8, 0.92);
+    z-index: 10000;
+    display: none; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .lightbox-overlay.open { display: flex; opacity: 1; }
+  .lightbox-img {
+    max-width: 90%; max-height: 90%;
+    border-radius: 4px; box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    transform: scale(0.95); transition: transform 0.25s ease;
+    object-fit: contain;
+  }
+  .lightbox-overlay.open .lightbox-img { transform: scale(1); }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 25px;
+    background: none; border: none; color: #fff;
+    font-size: 2.5rem; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;
+    line-height: 1; z-index: 10001;
+  }
+  .lightbox-close:hover { opacity: 1; color: var(--accent-gold); }
+  .lightbox-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+    color: white; font-size: 1.5rem; cursor: pointer;
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.6; transition: all 0.2s; z-index: 10001;
+  }
+  .lightbox-nav:hover { opacity: 1; background: rgba(0,0,0,0.8); color: var(--accent-gold); border-color: var(--accent-gold); }
+  .lightbox-prev { left: 20px; }
+  .lightbox-next { right: 20px; }
+  .post-image { cursor: zoom-in; }
 </style>
 </head>
 <body>
 
 <!-- ══════════ HEADER ══════════ -->
 <header id="main-header">
-  <div class="logo" onclick="goHome()">墨海書閣 <span>小說分享交流平台</span></div>
+  <div class="logo" onclick="showPage('feed')">墨海書閣 <span>小說分享交流平台</span></div>
   <nav id="main-nav">
-    <button class="nav-btn" onclick="showPage('feed')">書海分享</button>
     <button class="nav-btn" id="nav-home-btn" onclick="showPage('home')" style="display:none">個人首頁</button>
     <button class="nav-btn" id="nav-logout-btn" onclick="logout()" style="display:none">登出</button>
     <button class="nav-btn primary" id="nav-login-btn" onclick="showPage('login')">登入</button>
@@ -1139,7 +1186,6 @@
       </div>
       <div class="sidebar-nav">
         <div class="sidebar-item active" onclick="switchHomeTab('my-posts')"><span class="sidebar-icon">📜</span> 我的文章</div>
-        <div class="sidebar-item" onclick="showPage('feed')"><span class="sidebar-icon">🌊</span> 書海分享</div>
       </div>
       <button class="new-post-btn" onclick="showPage('compose')">✦ 新增貼文</button>
     </aside>
@@ -1174,17 +1220,12 @@
       </div>
       <input class="compose-input" id="compose-title" placeholder="文章主題（必填）">
       <textarea class="compose-textarea" id="compose-body" placeholder="書寫您的故事、感悟或評論……"></textarea>
-      <input type="file" id="compose-img-file" accept="image/*" style="display:none" onchange="handleComposeImage()">
+      <input type="file" id="compose-img-file" accept="image/*" multiple style="display:none" onchange="handleComposeImage()">
       <div class="image-upload-area" id="compose-img-area" onclick="document.getElementById('compose-img-file').click()">
         <span class="upload-icon">🖼</span>
-        點擊上傳圖片（可選）
+        點擊上傳圖片（最多 10 張）
       </div>
-      <div id="compose-img-preview" style="display:none; margin-bottom:1rem">
-        <div class="image-preview-wrap">
-          <img id="compose-preview-img" src="" alt="">
-          <button class="remove-img" onclick="removeComposeImage()">✕</button>
-        </div>
-      </div>
+      <div id="compose-img-preview-list" class="compose-img-preview-list" style="display:none;"></div>
       <div class="error-msg" id="compose-error" style="display:none; margin-bottom:0.5rem"></div>
       <div class="compose-actions">
         <span class="cancel-link" onclick="showPage('home')">← 取消</span>
@@ -1204,6 +1245,14 @@
         <p>書海尚靜，等待第一篇文章<br>登入後即可開始分享</p>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══════════ POST PAGE (SINGLE VIEW) ══════════ -->
+<div id="page-post" class="page">
+  <div class="feed-container">
+    <button class="profile-back-btn" id="post-back-btn" style="margin-top: 1rem;">← 返回</button>
+    <div id="single-post-container" style="margin-top: 1rem;"></div>
   </div>
 </div>
 
@@ -1282,6 +1331,14 @@
   </div>
 </div>
 
+<!-- ══════════ LIGHTBOX MODAL ══════════ -->
+<div class="lightbox-overlay" id="lightbox-modal" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" onclick="event.stopPropagation(); prevLightboxImage()" style="display:none">❮</button>
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" onclick="event.stopPropagation(); nextLightboxImage()" style="display:none">❯</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
 <!-- ══════════ TOAST ══════════ -->
 <div class="toast" id="toast"></div>
 
@@ -1292,13 +1349,15 @@
 let users = JSON.parse(localStorage.getItem('mh_users') || '[]');
 let posts = JSON.parse(localStorage.getItem('mh_posts') || '[]');
 let currentUser = JSON.parse(localStorage.getItem('mh_current') || 'null');
-let composeImageData = null;
+let composeImagesData = [];
 let regAvatarData = null;
 let _pendingDelete = null; // { type: 'post'|'comment', postId, commentIdx }
 let _pendingLoginUser = null; // user waiting for 2FA
 let _tfaGeckoIndices = [];  // which grid cells are geckos
 let _tfaSelected = new Set(); // user-selected cells
 let _tfaAttempts = 0;        // remaining attempts
+let _lightboxImages = [];
+let _lightboxIndex = 0;
 
 function saveData() {
   localStorage.setItem('mh_users', JSON.stringify(users));
@@ -1309,12 +1368,14 @@ function saveData() {
 // ════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════
-function showPage(name) {
+function showPage(name, restoreScrollY = 0) {
+  if (name !== 'post' && name !== 'profile') {
+    sessionStorage.setItem('mh_route', JSON.stringify({ page: name }));
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + name);
   if (pg) pg.classList.add('active');
   updateNav();
-  window.scrollTo(0, 0);
 
   if (name === 'home') renderHomePosts();
   if (name === 'feed') renderFeedPosts();
@@ -1326,6 +1387,10 @@ function showPage(name) {
     if (!currentUser) { showPage('login'); return; }
     setupHomeSidebar();
   }
+
+  requestAnimationFrame(() => {
+    window.scrollTo(0, restoreScrollY);
+  });
 }
 
 // ════════════════════════════════
@@ -1345,6 +1410,7 @@ function viewProfile(userId) {
   // Store current page for back button
   const activePage = document.querySelector('.page.active');
   _prevPage = activePage ? activePage.id.replace('page-', '') : 'feed';
+  const savedScrollY = window.scrollY;
 
   // Populate hero card
   document.getElementById('prof-name').textContent = user.name;
@@ -1367,7 +1433,7 @@ function viewProfile(userId) {
   }
 
   // Back button: return to previous page
-  document.getElementById('prof-back-btn').onclick = () => showPage(_prevPage);
+  document.getElementById('prof-back-btn').onclick = () => showPage(_prevPage, savedScrollY);
 
   // Render that user's posts (read-only, no delete button)
   const listEl = document.getElementById('prof-post-list');
@@ -1382,7 +1448,9 @@ function viewProfile(userId) {
   document.getElementById('page-profile').classList.add('active');
   updateNav();
   window.scrollTo(0, 0);
+  sessionStorage.setItem('mh_route', JSON.stringify({ page: 'profile', id: userId }));
 }
+
 
 function goHome() {
   if (currentUser) showPage('home');
@@ -1593,6 +1661,7 @@ function closeTwoFactor() {
 function logout() {
   currentUser = null;
   saveData();
+  sessionStorage.removeItem('mh_route');
   showToast('已登出書閣');
   // Clear remembered ID on explicit logout
   localStorage.removeItem('mh_remember_id');
@@ -1653,7 +1722,8 @@ function setupCompose() {
   setAvatarEl('compose-avatar-img', 'compose-avatar-placeholder', currentUser.avatar, currentUser.name);
   document.getElementById('compose-title').value = '';
   document.getElementById('compose-body').value = '';
-  removeComposeImage();
+  composeImagesData = [];
+  renderComposeImagePreviews();
   document.getElementById('compose-error').style.display = 'none';
 }
 
@@ -1674,23 +1744,62 @@ function setAvatarEl(imgId, phId, avatarData, name) {
 // COMPOSE / PUBLISH
 // ════════════════════════════════
 function handleComposeImage() {
-  const file = document.getElementById('compose-img-file').files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    composeImageData = e.target.result;
-    document.getElementById('compose-preview-img').src = composeImageData;
-    document.getElementById('compose-img-preview').style.display = '';
-    document.getElementById('compose-img-area').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+  const files = document.getElementById('compose-img-file').files;
+  if (!files || files.length === 0) return;
+  
+  const remainingSlots = 10 - composeImagesData.length;
+  if (remainingSlots <= 0) {
+    showToast('最多只能上傳 10 張圖片');
+    return;
+  }
+
+  const filesToProcess = Array.from(files).slice(0, remainingSlots);
+  let loadedCount = 0;
+
+  filesToProcess.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      composeImagesData.push(e.target.result);
+      loadedCount++;
+      if (loadedCount === filesToProcess.length) {
+        renderComposeImagePreviews();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  if (files.length > remainingSlots) {
+    showToast(`只能再上傳 ${remainingSlots} 張圖片，多餘的已被忽略`);
+  }
 }
 
-function removeComposeImage() {
-  composeImageData = null;
-  document.getElementById('compose-img-preview').style.display = 'none';
-  document.getElementById('compose-img-area').style.display = '';
-  document.getElementById('compose-img-file').value = '';
+function renderComposeImagePreviews() {
+  const listEl = document.getElementById('compose-img-preview-list');
+  const areaEl = document.getElementById('compose-img-area');
+  const fileInput = document.getElementById('compose-img-file');
+  
+  if (composeImagesData.length > 0) {
+    listEl.style.display = 'flex';
+    listEl.innerHTML = composeImagesData.map((data, idx) => `
+      <div class="image-preview-wrap">
+        <img src="${data}" alt="">
+        <button class="remove-img" onclick="removeComposeImage(${idx})">✕</button>
+      </div>
+    `).join('');
+    
+    // If reached 10, hide upload area, else show it
+    areaEl.style.display = composeImagesData.length >= 10 ? 'none' : 'block';
+  } else {
+    listEl.style.display = 'none';
+    listEl.innerHTML = '';
+    areaEl.style.display = 'block';
+  }
+  fileInput.value = ''; // reset so same files can be selected again
+}
+
+function removeComposeImage(idx) {
+  composeImagesData.splice(idx, 1);
+  renderComposeImagePreviews();
 }
 
 function publishPost() {
@@ -1716,7 +1825,7 @@ function publishPost() {
     authorAvatar: currentUser.avatar,
     title,
     body,
-    image: composeImageData,
+    images: [...composeImagesData],
     time: new Date().toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
     likes: [],
     comments: []
@@ -1753,13 +1862,58 @@ function renderFeedPosts() {
   setupCommentListeners();
 }
 
-function renderPostCard(p, showComments, readOnly = false) {
+function viewPost(postId) {
+  const activePage = document.querySelector('.page.active');
+  let backPage = 'feed';
+  let savedScrollY = window.scrollY;
+  if (activePage && activePage.id !== 'page-post') {
+    backPage = activePage.id.replace('page-', '');
+  }
+
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  const container = document.getElementById('single-post-container');
+  container.innerHTML = renderPostCard(post, true, false, true);
+  
+  const backBtn = document.getElementById('post-back-btn');
+  if (backBtn) {
+    backBtn.onclick = () => showPage(backPage, savedScrollY);
+  }
+  
+  setupCommentListeners();
+  sessionStorage.setItem('mh_route', JSON.stringify({ page: 'post', id: postId }));
+  showPage('post');
+}
+
+function renderPostCard(p, showComments, readOnly = false, isExpanded = false) {
   const avatarHtml = p.authorAvatar
     ? `<img src="${p.authorAvatar}" alt="">`
     : `<span style="font-size:1rem">${p.authorName[0]}</span>`;
 
   const liked = currentUser && p.likes.includes(currentUser.id);
-  const imgHtml = p.image ? `<img class="post-image" src="${p.image}" alt="文章圖片">` : '';
+  
+  // Backward compatibility: handle old posts with single `p.image`
+  const images = p.images || (p.image ? [p.image] : []);
+  let imgHtml = '';
+  if (images.length > 0) {
+    const isSingle = images.length === 1 ? 'single-image' : '';
+    const displayLimit = isExpanded ? images.length : 6;
+    const displayImages = images.slice(0, displayLimit);
+    const hasMore = !isExpanded && images.length > 6;
+    
+    imgHtml = `<div class="post-images-grid ${isSingle}">` + 
+      displayImages.map((imgData, idx) => {
+        if (hasMore && idx === 5) {
+          return `<div class="image-wrapper" onclick="viewPost(${p.id})">
+                    <img class="post-image" style="cursor:pointer" src="${imgData}" alt="文章圖片">
+                    <div class="more-images-overlay">+${images.length - 6}</div>
+                  </div>`;
+        } else {
+          return `<div class="image-wrapper"><img class="post-image" src="${imgData}" alt="文章圖片" onclick="openLightbox(${p.id}, ${idx})"></div>`;
+        }
+      }).join('') +
+      `</div>`;
+  }
 
   // Only show profile link when NOT already on the profile page and NOT the post owner
   const isOwnPost = currentUser && p.authorId === currentUser.id;
@@ -1811,7 +1965,7 @@ function renderPostCard(p, showComments, readOnly = false) {
       <div class="post-time">${p.time}</div>
     </div>
     <div class="post-title">${escHtml(p.title)}</div>
-    <div class="post-content truncated">${escHtml(p.body)}</div>
+    <div class="${isExpanded ? 'post-content' : 'post-content truncated'}" ${!isExpanded ? `style="cursor:pointer" onclick="viewPost(${p.id})" title="點擊閱讀全文"` : ''}>${escHtml(p.body)}</div>
     ${imgHtml}
     <div class="post-actions">
       <button class="action-btn ${liked ? 'liked' : ''}" onclick="toggleLike(${p.id})">
@@ -1822,7 +1976,7 @@ function renderPostCard(p, showComments, readOnly = false) {
       </button>
       ${deletePostBtn}
     </div>
-    <div class="comments-section hidden" id="cs-${p.id}">
+    <div class="comments-section ${isExpanded ? '' : 'hidden'}" id="cs-${p.id}">
       ${commentsHtml}
       ${commentInputHtml}
     </div>
@@ -1931,10 +2085,61 @@ function confirmDelete() {
 }
 
 // ════════════════════════════════
-// MODAL / TOAST
+// MODAL / TOAST / LIGHTBOX
 // ════════════════════════════════
 function closeModal() {
   document.getElementById('auth-modal').classList.remove('open');
+}
+
+function openLightbox(postId, idx) {
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  _lightboxImages = post.images || (post.image ? [post.image] : []);
+  if (_lightboxImages.length === 0) return;
+  _lightboxIndex = idx;
+  
+  _updateLightboxImage();
+  const modal = document.getElementById('lightbox-modal');
+  modal.classList.add('open');
+}
+
+function _updateLightboxImage() {
+  const img = document.getElementById('lightbox-img');
+  img.src = _lightboxImages[_lightboxIndex];
+  
+  const prevBtn = document.getElementById('lightbox-prev');
+  const nextBtn = document.getElementById('lightbox-next');
+  if (_lightboxImages.length > 1) {
+    prevBtn.style.display = '';
+    nextBtn.style.display = '';
+  } else {
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+  }
+}
+
+function prevLightboxImage() {
+  if (_lightboxImages.length <= 1) return;
+  _lightboxIndex = (_lightboxIndex - 1 + _lightboxImages.length) % _lightboxImages.length;
+  _updateLightboxImage();
+}
+
+function nextLightboxImage() {
+  if (_lightboxImages.length <= 1) return;
+  _lightboxIndex = (_lightboxIndex + 1) % _lightboxImages.length;
+  _updateLightboxImage();
+}
+
+function closeLightbox() {
+  const modal = document.getElementById('lightbox-modal');
+  modal.classList.remove('open');
+  setTimeout(() => {
+    // Clear src after animation to save memory
+    if (!modal.classList.contains('open')) {
+      document.getElementById('lightbox-img').src = '';
+      _lightboxImages = [];
+    }
+  }, 250);
 }
 
 let toastTimer;
@@ -1954,7 +2159,32 @@ function escHtml(str) {
 // INIT
 // ════════════════════════════════
 updateNav();
-if (currentUser) {
+
+const savedRouteStr = sessionStorage.getItem('mh_route');
+let restored = false;
+if (savedRouteStr) {
+  try {
+    const route = JSON.parse(savedRouteStr);
+    if (route.page === 'post') {
+      viewPost(route.id);
+      restored = true;
+    } else if (route.page === 'profile') {
+      viewProfile(route.id);
+      restored = true;
+    } else if (route.page) {
+      showPage(route.page);
+      restored = true;
+    }
+  } catch(e) {}
+}
+
+if (!restored) {
+  if (currentUser) {
+    showPage('home'); // 預設跳到個人頁面
+  } else {
+    showPage('landing');
+  }
+} else if (currentUser) {
   setupHomeSidebar();
 }
 
@@ -2018,6 +2248,16 @@ document.addEventListener('keydown', e => {
     // 從 input 的 id "ci-{postId}" 取得 postId
     const postId = Number(e.target.id.replace('ci-', ''));
     if (postId) sendComment(postId);
+  }
+  
+  // 監聽 Escape 鍵關閉 Lightbox
+  if (e.key === 'Escape') {
+    closeLightbox();
+  }
+  // 監聽左右方向鍵切換圖片
+  if (document.getElementById('lightbox-modal').classList.contains('open')) {
+    if (e.key === 'ArrowLeft') prevLightboxImage();
+    if (e.key === 'ArrowRight') nextLightboxImage();
   }
 });
 </script>
